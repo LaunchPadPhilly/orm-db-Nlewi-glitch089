@@ -13,8 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.actor != 'github-classroom[bot]'
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-
+      DATABASE_URL: 'postgresql://neondb_owner:npg_BGdCPHzh9a5u@ep-shy-night-adys9nce-pooler.c-2.us-east-1.aws.neon.tech/project_portfolios?sslmode=require&channel_binding=require'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
