@@ -44,3 +44,7 @@ next-env.d.ts
 .vitest
 
 /app/generated/prisma
+
+#Envirnonment Variables
+.env 
+.env.local

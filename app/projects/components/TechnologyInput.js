@@ -1,42 +1,106 @@
-// TODO: Students will implement this component
-// This is an advanced component building exercise
+'use client'
 
-// Component Requirements:
-// 1. Create a component that accepts { technologies, onChange, error } props
-// 2. Allow users to type in a technology name and add it to the list
-// 3. Provide quick-add buttons for common technologies
-// 4. Display selected technologies as removable tags
-// 5. Prevent duplicate technologies
-// 6. Support both keyboard (Enter) and button (Add) interactions
-// 7. Handle error states with visual feedback
+import { useState } from 'react'
 
-// Learning Objectives:
-// - Advanced React state management
-// - Array manipulation patterns
-// - User input handling
-// - Conditional styling
-// - Accessibility considerations
-// - Component prop patterns
-
-// Suggested Technologies for Quick-Add:
-// ['JavaScript', 'TypeScript', 'React', 'Next.js', 'Node.js', 'Express',
-//  'HTML', 'CSS', 'Tailwind CSS', 'Bootstrap', 'Python', 'Java',
-//  'PostgreSQL', 'MongoDB', 'MySQL', 'Prisma', 'GraphQL', 'REST API',
-//  'Git', 'Docker', 'AWS', 'Vercel', 'Figma', 'Photoshop']
-
-// Implementation Hints:
-// - Use 'use client' directive
-// - Manage local input state with useState
-// - Use filter() to remove technologies
-// - Use includes() to check for duplicates
-// - Handle keyPress event for Enter key
-// - Style error states with conditional classes
+const QUICK_ADD_TECHNOLOGIES = [
+  'React',
+  'Next.js',
+  'JavaScript',
+  'TypeScript',
+  'Tailwind CSS',
+  'Node.js',
+  'PostgreSQL',
+  'HTML',
+  'CSS',
+  'Git'
+]
 
 export default function TechnologyInput({ technologies = [], onChange, error }) {
-  // TODO: Implement this component
+  const [input, setInput] = useState('')
+
+  const handleAdd = (tech) => {
+    if (tech && !technologies.includes(tech)) {
+      onChange([...technologies, tech])
+      setInput('')
+    }
+  }
+
+  const handleRemove = (tech) => {
+    onChange(technologies.filter(t => t !== tech))
+  }
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleAdd(input.trim())
+    }
+  }
+
   return (
-    <div>
-      <p>TODO: Implement TechnologyInput component</p>
+    <div className="space-y-3">
+      {/* Quick add buttons */}
+      <div className="flex flex-wrap gap-2">
+        {QUICK_ADD_TECHNOLOGIES.map((tech) => (
+          <button
+            key={tech}
+            type="button"
+            onClick={() => handleAdd(tech)}
+            disabled={technologies.includes(tech)}
+            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+              technologies.includes(tech)
+                ? 'bg-blue-200 text-blue-800 cursor-not-allowed'
+                : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+            }`}
+          >
+            + {tech}
+          </button>
+        ))}
+      </div>
+
+      {/* Custom input */}
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyPress={handleKeyPress}
+          placeholder="Or type a custom technology..."
+          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+        />
+        <button
+          type="button"
+          onClick={() => handleAdd(input.trim())}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Add
+        </button>
+      </div>
+
+      {/* Selected technologies */}
+      {technologies.length > 0 && (
+        <div className="flex flex-wrap gap-2 pt-2">
+          {technologies.map((tech) => (
+            <div
+              key={tech}
+              className="bg-blue-100 text-blue-900 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2"
+            >
+              {tech}
+              <button
+                type="button"
+                onClick={() => handleRemove(tech)}
+                className="hover:text-blue-700 font-bold"
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Error message */}
+      {error && (
+        <p className="text-red-600 text-sm">{error}</p>
+      )}
     </div>
-  );
+  )
 }
