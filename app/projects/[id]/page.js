@@ -5,27 +5,18 @@ import { notFound } from 'next/navigation';
 export default async function ProjectDetail({ params }) {
   const { id } = params;
 
-  // TODO: Fetch the specific project from your API
-  // Instructions for students:
-  // 1. Use fetch() to get data from /api/projects/[id]
-  // 2. Handle 404 responses by calling notFound()
-  // 3. Parse the JSON response
-  // 4. Display the project details
-  
-  // Example implementation (students should write this):
-  // const response = await fetch(`http://localhost:3000/api/projects/${id}`);
-  // 
-  // if (!response.ok) {
-  //   if (response.status === 404) {
-  //     notFound();
-  //   }
-  //   throw new Error('Failed to fetch project');
-  // }
-  // 
-  // const project = await response.json();
+  // Fetch the specific project from the API route
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const res = await fetch(`${baseUrl}/api/projects/${id}`);
 
-  // For now, return placeholder until students implement the API
-  const project = null;
+  if (!res.ok) {
+    if (res.status === 404) {
+      notFound();
+    }
+    throw new Error('Failed to fetch project');
+  }
+
+  const project = await res.json();
 
   if (!project) {
     return (
@@ -81,9 +72,9 @@ export default async function ProjectDetail({ params }) {
             <Image
               src={project.imageUrl}
               alt={project.title}
-              width={800}
-              height={400}
-              className="w-full rounded-lg shadow-lg"
+              width={600}
+              height={300}
+              className="w-full rounded-lg shadow-lg object-cover"
             />
           </div>
         )}

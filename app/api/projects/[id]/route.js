@@ -7,7 +7,6 @@ export async function GET(request, { params }) {
   try {
     const id = parseInt(params.id);
     
-    // Validate that id is a number
     if (isNaN(id)) {
       return NextResponse.json(
         { error: 'Invalid project ID' },
@@ -15,27 +14,18 @@ export async function GET(request, { params }) {
       );
     }
 
-    // TODO: Implement GET request to return a specific project
-    // Instructions for students:
-    // 1. Use prisma.project.findUnique() to get the project by id
-    // 2. Return 404 if project is not found
-    // 3. Return the project as JSON if found
-    
-    // Example implementation (students should write this):
-    // const project = await prisma.project.findUnique({
-    //   where: { id: id }
-    // });
-    //
-    // if (!project) {
-    //   return NextResponse.json(
-    //     { error: 'Project not found' },
-    //     { status: 404 }
-    //   );
-    // }
-    //
-    // return NextResponse.json(project);
+    const project = await prisma.project.findUnique({
+      where: { id: id }
+    });
 
-    return NextResponse.json({ message: `TODO: Implement GET /api/projects/${id}` }, { status: 501 });
+    if (!project) {
+      return NextResponse.json(
+        { error: 'Project not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(project);
   } catch (error) {
     console.error('Error fetching project:', error);
     return NextResponse.json(
@@ -56,32 +46,39 @@ export async function PUT(request, { params }) {
       );
     }
 
-    // TODO: Implement PUT request to update a specific project
-    // Instructions for students:
-    // 1. Parse the request body to get updated project data
-    // 2. Use prisma.project.update() to update the project
-    // 3. Return 404 if project is not found
-    // 4. Return the updated project as JSON
-    
-    // Example implementation (students should write this):
-    // const body = await request.json();
-    // const { title, description, imageUrl, projectUrl, githubUrl, technologies } = body;
-    //
-    // const project = await prisma.project.update({
-    //   where: { id: id },
-    //   data: {
-    //     title,
-    //     description,
-    //     imageUrl,
-    //     projectUrl,
-    //     githubUrl,
-    //     technologies
-    //   }
-    // });
-    //
-    // return NextResponse.json(project);
+    const body = await request.json();
+    const { title, description, imageUrl, projectUrl, githubUrl, technologies } = body || {};
 
-    return NextResponse.json({ message: `TODO: Implement PUT /api/projects/${id}` }, { status: 501 });
+    // If no data provided, return bad request
+    if (!body || Object.keys(body).length === 0) {
+      return NextResponse.json({ error: 'No update data provided' }, { status: 400 });
+    }
+
+    // If technologies is supplied, ensure it's an array
+    if (technologies !== undefined && !Array.isArray(technologies)) {
+      return NextResponse.json({ error: 'Technologies must be an array' }, { status: 400 });
+    }
+
+    // Build the update payload only with provided fields
+    const updateData = {};
+    if (title !== undefined) updateData.title = title;
+    if (description !== undefined) updateData.description = description;
+    if (imageUrl !== undefined) updateData.imageUrl = imageUrl || null;
+    if (projectUrl !== undefined) updateData.projectUrl = projectUrl || null;
+    if (githubUrl !== undefined) updateData.githubUrl = githubUrl || null;
+    if (technologies !== undefined) updateData.technologies = technologies;
+
+    try {
+      const project = await prisma.project.update({
+        where: { id: id },
+        data: updateData,
+      });
+
+      return NextResponse.json(project);
+    } catch (err) {
+      // If the record doesn't exist, Prisma throws a known error
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+    }
   } catch (error) {
     console.error('Error updating project:', error);
     return NextResponse.json(
@@ -102,20 +99,12 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    // TODO: Implement DELETE request to delete a specific project
-    // Instructions for students:
-    // 1. Use prisma.project.delete() to delete the project
-    // 2. Return 404 if project is not found
-    // 3. Return a success message as JSON
-    
-    // Example implementation (students should write this):
-    // await prisma.project.delete({
-    //   where: { id: id }
-    // });
-    //
-    // return NextResponse.json({ message: 'Project deleted successfully' });
-
-    return NextResponse.json({ message: `TODO: Implement DELETE /api/projects/${id}` }, { status: 501 });
+    try {
+      await prisma.project.delete({ where: { id: id } });
+      return NextResponse.json({ message: 'Project deleted successfully' });
+    } catch (err) {
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+    }
   } catch (error) {
     console.error('Error deleting project:', error);
     return NextResponse.json(

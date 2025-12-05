@@ -24,14 +24,9 @@
 // - Error state management
 // - Component composition
 
-// Hints:
 // - Use 'use client' directive for client-side functionality
 // - Import TechnologyInput from './TechnologyInput'
 // - Use regex for URL validation: /^https?:\/\/.+\..+/
 // - Handle async form submission with try/catch
 // - Use loading state to prevent double submission
-
-export default function ProjectForm({ onSubmit, onCancel, isOpen }) {
-  // TODO: Implement this component
-  return null;
-}
+export { default } from './ProjectForm.jsx'

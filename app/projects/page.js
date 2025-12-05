@@ -1,76 +1,88 @@
-<<<<<<< HEAD
+"use client"
+
+import React, { useEffect, useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import ProjectForm from './components/ProjectForm'
+
+const PLACEHOLDERS = [
+  'https://placehold.co/600x400/blue/white?text=Lemon-Aid',
+  'https://placehold.co/600x400/green/white?text=PlayerLobby',
+  'https://placehold.co/600x400/purple/white?text=PlanPal',
+]
+
 export default function Projects() {
+  const [projects, setProjects] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [showForm, setShowForm] = useState(false)
+
+  useEffect(() => {
+    let mounted = true
+    async function load() {
+      setLoading(true)
+      try {
+        const res = await fetch('/api/projects')
+        if (!res.ok) throw new Error('Failed to load projects')
+        const data = await res.json()
+        if (mounted) setProjects(data)
+      } catch (err) {
+        if (mounted) setError(err.message)
+      } finally {
+        if (mounted) setLoading(false)
+      }
+    }
+    load()
+    return () => { mounted = false }
+  }, [])
+
+  async function handleCreate(newProject) {
+    // Optimistically add or refetch
+    setProjects((p) => [newProject, ...p])
+    setShowForm(false)
+  }
+
   return (
     <div className="min-h-screen p-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-5xl font-bold mb-12">My Projects</h1>
-        
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-          {/* Project Card Example - Duplicate this 3 times */}
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-            <div className="h-48 bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center">
-              <p className="text-white font-bold text-xl">Project Image Here</p>
-            </div>
-            <div className="p-6">
-              <h3 className="text-2xl font-bold mb-2">Project Title</h3>
-              <p className="text-gray-600 mb-4">
-                Write a brief description of your project here.
-              </p>
-              <div className="flex gap-2">
-                <span className="text-sm bg-gray-200 px-3 py-1 rounded">Tech 1</span>
-                <span className="text-sm bg-gray-200 px-3 py-1 rounded">Tech 2</span>
-              </div>
-            </div>
-          </div>
-
-          {/* TODO: Add 2 more project cards */}
-          
-        </div>
-
-=======
-import Image from 'next/image';
-import Link from 'next/link';
-
-export default function Projects() {
-  // TODO: Students will implement the following:
-  // 1. Convert this server component to a client component
-  // 2. Add state management for projects, loading, and form visibility
-  // 3. Implement API fetch functions to get projects from the database
-  // 4. Add project creation functionality using the ProjectForm component
-  // 5. Handle loading and error states
-
-  // For now, show placeholder content
-  const placeholderProjects = [];
-
-  return (
-    <div className="min-h-screen p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header - students will add "Add New Project" button here */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4">
+        {/* Header - Add New Project button top-right */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           <h1 className="text-5xl font-bold">My Projects</h1>
-          {/* TODO: Add "Add New Project" button that shows/hides the form */}
+          <div className="ml-auto">
+            <button
+              onClick={() => setShowForm((s) => !s)}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+            >
+              {showForm ? 'Close' : 'Add New Project'}
+            </button>
+          </div>
         </div>
 
-        {/* TODO: Add ProjectForm component here */}
-        {/* The form should be conditionally rendered based on showForm state */}
+        {/* Slide-down form */}
+        <div className={`overflow-hidden transition-all duration-300 ${showForm ? 'max-h-[800px] mb-6' : 'max-h-0'}`}>
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <ProjectForm isOpen={showForm} onCancel={() => setShowForm(false)} onSubmit={handleCreate} />
+          </div>
+        </div>
 
         {/* Projects Grid */}
-        {placeholderProjects.length > 0 ? (
+        {loading ? (
+          <p className="text-center py-12">Loading projects...</p>
+        ) : error ? (
+          <p className="text-center text-red-600 py-12">{error}</p>
+        ) : projects.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-            {placeholderProjects.map((project) => (
+            {projects.map((project, idx) => (
               <div key={project.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                <div className="h-48 bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center">
-                  {project.imageUrl ? (
-                    <Image
-                      src={project.imageUrl}
-                      alt={project.title}
-                      width={400}
-                      height={200}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <p className="text-white font-bold text-xl">No Image</p>
-                  )}
+                <div className="h-40 overflow-hidden">
+                  <Image
+                    src={project.imageUrl || PLACEHOLDERS[idx % PLACEHOLDERS.length]}
+                    alt={project.title + ' screenshot'}
+                    width={600}
+                    height={400}
+                    className="object-cover w-full h-full"
+                    unoptimized
+                  />
                 </div>
                 <div className="p-6">
                   <h3 className="text-2xl font-bold mb-2">{project.title}</h3>
@@ -88,7 +100,7 @@ export default function Projects() {
                     )}
                   </div>
                   <div className="flex gap-2">
-                    <Link 
+                    <Link
                       href={`/projects/${project.id}`}
                       className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
                     >
@@ -110,29 +122,17 @@ export default function Projects() {
             ))}
           </div>
         ) : (
-          /* Empty State - Students will enhance this */
+          /* Empty State */
           <div className="text-center py-12">
             <div className="mb-8">
               <h2 className="text-2xl font-bold mb-4">No projects yet</h2>
               <p className="text-gray-600 mb-6">
-                Get started by setting up your database and implementing the API routes!
+                Get started by creating your first project!
               </p>
-            </div>
-
-            <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-6 max-w-md mx-auto">
-              <h3 className="font-bold text-blue-900 mb-2">🚀 Getting Started:</h3>
-              <ol className="text-blue-800 space-y-1 list-decimal list-inside text-left">
-                <li>Set up your Neon database</li>
-                <li>Implement the API routes</li>
-                <li>Add project creation functionality</li>
-                <li>Convert this page to use database data</li>
-              </ol>
             </div>
           </div>
         )}
 
-        {/* Project Ideas */}
->>>>>>> solution
         <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-6">
           <h3 className="font-bold text-yellow-900 mb-2">💡 Project Ideas:</h3>
           <ul className="text-yellow-800 space-y-1">
@@ -144,11 +144,7 @@ export default function Projects() {
         </div>
       </div>
     </div>
-<<<<<<< HEAD
   )
-}
-=======
-  );
 }
 
 // Learning Objectives for Students:
@@ -158,4 +154,3 @@ export default function Projects() {
 // 4. Handle async operations and error states
 // 5. Build interactive user interfaces
 // 6. Practice component composition
->>>>>>> solution
