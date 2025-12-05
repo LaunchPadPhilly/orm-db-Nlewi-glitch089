@@ -5,27 +5,23 @@ import { notFound } from 'next/navigation';
 export default async function ProjectDetail({ params }) {
   const { id } = params;
 
-  // TODO: Fetch the specific project from your API
-  // Instructions for students:
-  // 1. Use fetch() to get data from /api/projects/[id]
-  // 2. Handle 404 responses by calling notFound()
-  // 3. Parse the JSON response
-  // 4. Display the project details
-  
-  // Example implementation (students should write this):
-  // const response = await fetch(`http://localhost:3000/api/projects/${id}`);
-  // 
-  // if (!response.ok) {
-  //   if (response.status === 404) {
-  //     notFound();
-  //   }
-  //   throw new Error('Failed to fetch project');
-  // }
-  // 
-  // const project = await response.json();
+  // Fetch the specific project from the API route
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const res = await fetch(`${baseUrl}/api/projects/${id}`);
 
-  // For now, return placeholder until students implement the API
-  const project = null;
+  if (!res.ok) {
+    if (res.status === 404) {
+      notFound();
+    }
+    throw new Error('Failed to fetch project');
+  }
+
+  const project = await res.json();
+
+  // If seed projects should show the external placeholders, override here as well
+  const PLACEHOLDERS = ['/project1.jpg','/project2.jpg','/project3.jpg']
+  const seedMap = new Map([[1, PLACEHOLDERS[0]], [2, PLACEHOLDERS[1]], [3, PLACEHOLDERS[2]]])
+  if (seedMap.has(project.id)) project.imageUrl = seedMap.get(project.id)
 
   if (!project) {
     return (
@@ -67,25 +63,28 @@ export default async function ProjectDetail({ params }) {
         <div className="mb-8">
           <h1 className="text-5xl font-bold mb-4">{project.title}</h1>
           <div className="flex gap-2 mb-6">
-            {project.technologies.map((tech, index) => (
+            {(project.technologies || []).map((tech, index) => (
               <span key={index} className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full">
                 {tech}
               </span>
             ))}
+            {(!project.technologies || project.technologies.length === 0) && (
+              <span className="text-sm text-gray-500">This project has no tech stack</span>
+            )}
           </div>
         </div>
 
         {/* Project image */}
         {project.imageUrl && (
           <div className="mb-8">
-            <Image
-              src={project.imageUrl}
-              alt={project.title}
-              width={800}
-              height={400}
-              className="w-full rounded-lg shadow-lg"
-            />
-          </div>
+              <Image
+                src={project.imageUrl}
+                alt={`Screenshot of ${project.title}`}
+                width={600}
+                height={400}
+                className="w-full rounded-lg shadow-lg object-cover"
+              />
+            </div>
         )}
 
         {/* Project content */}

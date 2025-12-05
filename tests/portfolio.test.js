@@ -52,8 +52,6 @@ describe('Week 1 Portfolio - Component Tests', () => {
     
     expect(exists, 'Footer component is required').toBe(true)
   })
-<<<<<<< HEAD
-=======
 
   it('should have ProjectForm component file', () => {
     const projectFormPath = path.join(process.cwd(), 'app/projects/components/ProjectForm.js')
@@ -76,7 +74,6 @@ describe('Week 1 Portfolio - Component Tests', () => {
     
     expect(exists, 'TechnologyInput component is required for technology selection').toBe(true)
   })
->>>>>>> solution
 })
 
 describe('Week 1 Portfolio - Code Quality Tests', () => {
@@ -221,11 +218,8 @@ describe('Week 1 Portfolio - Completion Summary', () => {
       'app/layout.js',
       'app/components/Navbar.js',
       'app/components/Footer.js',
-<<<<<<< HEAD
-=======
       'app/projects/components/ProjectForm.js',
       'app/projects/components/TechnologyInput.js',
->>>>>>> solution
     ]
 
     requiredFiles.forEach(file => {

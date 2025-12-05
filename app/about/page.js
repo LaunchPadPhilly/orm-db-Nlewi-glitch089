@@ -1,26 +1,51 @@
+import Image from 'next/image'
+
 export default function About() {
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen p-8 bg-gray-50">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-5xl font-bold mb-8">About Me</h1>
-        
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h2 className="text-3xl font-bold mb-4">TODO: Add Your Profile</h2>
-          <div className="space-y-4 text-gray-600">
-            <p>✏️ Add a profile photo using the next/image component</p>
-            <p>✏️ Write a paragraph about who you are</p>
-            <p>✏️ List your skills or interests</p>
-            <p>✏️ Share your goals or what you're learning</p>
+
+        <div className="bg-white rounded-lg shadow-lg p-8 mb-8 flex flex-col md:flex-row items-center gap-8">
+          <div className="flex-shrink-0">
+            <Image
+              src="/profile.jpg"
+              alt="Profile photo of Nakerra Lewis"
+              width={220}
+              height={220}
+              className="rounded-full object-cover"
+            />
+          </div>
+
+          <div className="text-gray-700">
+            <h2 className="text-2xl font-bold mb-4">About Me</h2>
+            <p className="text-lg">
+              I&apos;m a creative problem solver exploring game design, user experience, and interactive media. I&apos;m learning how to build engaging apps that help people connect and step outside their comfort zones.
+            </p>
+            <p className="text-lg mt-4">
+              My goal is to create fun and meaningful digital experiences that inspire confidence and community.
+            </p>
           </div>
         </div>
 
-        <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-6">
-          <h3 className="font-bold text-blue-900 mb-2">💡 Example Structure:</h3>
-          <ul className="text-blue-800 space-y-1">
-            <li>• Profile photo (circular, 300x300px)</li>
-            <li>• Bio paragraph (3-5 sentences)</li>
-            <li>• Skills section with badges</li>
-            <li>• Education or experience timeline</li>
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+          <h2 className="text-3xl font-bold mb-4">Skills</h2>
+          <div className="flex flex-wrap gap-3">
+            <span className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full">HTML &amp; CSS</span>
+            <span className="bg-green-100 text-green-800 px-4 py-2 rounded-full">JavaScript</span>
+            <span className="bg-purple-100 text-purple-800 px-4 py-2 rounded-full">Tailwind CSS</span>
+            <span className="bg-indigo-100 text-indigo-800 px-4 py-2 rounded-full">React</span>
+            <span className="bg-pink-100 text-pink-800 px-4 py-2 rounded-full">Next.js</span>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h2 className="text-3xl font-bold mb-4">My Goals</h2>
+          <ul className="list-disc list-inside text-lg text-gray-700 space-y-2">
+            <li>Build user-friendly apps that encourage people to make new friends</li>
+            <li>Improve my skills in front-end development</li>
+            <li>Learn more about UX design and game mechanics</li>
+            <li>Launch more interactive projects like Lemon-Aid and PlanPal</li>
           </ul>
         </div>
       </div>

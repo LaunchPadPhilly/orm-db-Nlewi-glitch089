@@ -8,6 +8,8 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: './tests/setup.jsx',
+    // run tests in a single thread to avoid DB test concurrency issues
+    threads: false,
   },
   resolve: {
     alias: {
