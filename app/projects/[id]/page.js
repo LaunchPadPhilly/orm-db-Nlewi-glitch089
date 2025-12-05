@@ -18,6 +18,11 @@ export default async function ProjectDetail({ params }) {
 
   const project = await res.json();
 
+  // If seed projects should show the external placeholders, override here as well
+  const PLACEHOLDERS = ['/project1.jpg','/project2.jpg','/project3.jpg']
+  const seedMap = new Map([[1, PLACEHOLDERS[0]], [2, PLACEHOLDERS[1]], [3, PLACEHOLDERS[2]]])
+  if (seedMap.has(project.id)) project.imageUrl = seedMap.get(project.id)
+
   if (!project) {
     return (
       <div className="min-h-screen p-8">
@@ -58,25 +63,28 @@ export default async function ProjectDetail({ params }) {
         <div className="mb-8">
           <h1 className="text-5xl font-bold mb-4">{project.title}</h1>
           <div className="flex gap-2 mb-6">
-            {project.technologies.map((tech, index) => (
+            {(project.technologies || []).map((tech, index) => (
               <span key={index} className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full">
                 {tech}
               </span>
             ))}
+            {(!project.technologies || project.technologies.length === 0) && (
+              <span className="text-sm text-gray-500">This project has no tech stack</span>
+            )}
           </div>
         </div>
 
         {/* Project image */}
         {project.imageUrl && (
           <div className="mb-8">
-            <Image
-              src={project.imageUrl}
-              alt={project.title}
-              width={600}
-              height={300}
-              className="w-full rounded-lg shadow-lg object-cover"
-            />
-          </div>
+              <Image
+                src={project.imageUrl}
+                alt={`Screenshot of ${project.title}`}
+                width={600}
+                height={400}
+                className="w-full rounded-lg shadow-lg object-cover"
+              />
+            </div>
         )}
 
         {/* Project content */}

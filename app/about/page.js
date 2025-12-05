@@ -7,17 +7,18 @@ export default function About() {
         <h1 className="text-5xl font-bold mb-8">About Me</h1>
 
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8 flex flex-col md:flex-row items-center gap-8">
-                <div className="flex-shrink-0">
-                  <Image
-                    src="/profile.jpg"
-                    alt="Profile photo of Nakerra Lewis"
-                    width={300}
-                    height={300}
-                    className="rounded-full object-cover"
-                  />
-                </div>
+          <div className="flex-shrink-0">
+            <Image
+              src="/profile.jpg"
+              alt="Profile photo of Nakerra Lewis"
+              width={220}
+              height={220}
+              className="rounded-full object-cover"
+            />
+          </div>
 
           <div className="text-gray-700">
+            <h2 className="text-2xl font-bold mb-4">About Me</h2>
             <p className="text-lg">
               I&apos;m a creative problem solver exploring game design, user experience, and interactive media. I&apos;m learning how to build engaging apps that help people connect and step outside their comfort zones.
             </p>
